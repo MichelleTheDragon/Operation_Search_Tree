@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Operation_Search_Tree
 {
-    class Edge
+    public class Edge
     {
         private Node from;
         public Node From { get { return from; } }

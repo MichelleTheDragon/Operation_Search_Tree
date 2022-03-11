@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Operation_Search_Tree
 {
-    class GameObject
+    public class GameObject
     {
         protected Texture2D sprite;
         protected Rectangle rect;

@@ -7,14 +7,16 @@ using System.Text;
 
 namespace Operation_Search_Tree
 {
-    class Node : GameObject
+    public class Node : GameObject
     {
         private int depth;
         public int Depth { get { return depth; } }
         private bool isHovered;
-        private bool isClicked;
         private List<Edge> edges = new List<Edge>();
         public List<Edge> Edges { get { return edges; } }
+        private bool clickRegistered;
+        public Color LastColour { get; protected set; } = Color.White;
+        private Color resetColour = Color.White;
 
         public Node(Texture2D sprite, Vector2 worldPos, float scale, int depth) : base(sprite, worldPos)
         {
@@ -23,7 +25,9 @@ namespace Operation_Search_Tree
             if (depth == 0)
             {
                 colour = Color.LightGreen;
+                resetColour = colour;
             }
+
             //RngColour();
         }
 
@@ -39,22 +43,43 @@ namespace Operation_Search_Tree
 
             //}
 
-            if (rectangle.Contains(mousePoint) && depth > 0)
+            if (rectangle.Contains(mousePoint) && depth > 0 && isHovered != true)
             {
                 isHovered = true;
-                colour = Color.LightPink;
-                isClicked = mouseState.LeftButton == ButtonState.Pressed;
+                LastColour = colour;
+                colour = Color.LightBlue;
             }
-            else if(isHovered == true)
+            else if(!rectangle.Contains(mousePoint) && isHovered == true)
             {
-                colour = Color.White;
+                colour = LastColour;
                 isHovered = false;
-                isClicked = false;
+            }
+
+            if (mouseState.LeftButton == ButtonState.Pressed && isHovered && !clickRegistered && !NodeTree.isRunning)
+            {
+                NodeTree.ChangeGoal(this);
+
+                clickRegistered = true;
+                colour = Color.Blue;
+                LastColour = colour;
+            } else if (mouseState.LeftButton == ButtonState.Released && clickRegistered)
+            {
+                clickRegistered = false;
             }
         }
         public void AddEdge(Node other)
         {
             edges.Add(new Edge(this, other));
+        }
+
+        public void ChangeColour(Color newColour)
+        {
+            colour = newColour;
+        }
+
+        public void ResetColour()
+        {
+            colour = resetColour;
         }
 
         public void RngColour()
