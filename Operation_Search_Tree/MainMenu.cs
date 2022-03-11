@@ -6,16 +6,14 @@ using System.Text;
 
 namespace Operation_Search_Tree
 {
-    class MainMenu
+    class MainMenu : Scene
     {
-        private List<GameObject> myGameObjects = new List<GameObject>();
-
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
 
         }
 
-        public void Draw(SpriteBatch _spriteBatch)
+        public override void Draw(SpriteBatch _spriteBatch)
         {
 
         }

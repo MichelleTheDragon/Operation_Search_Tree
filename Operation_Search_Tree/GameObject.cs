@@ -11,6 +11,7 @@ namespace Operation_Search_Tree
         protected Texture2D sprite;
         protected Rectangle rect;
         protected Vector2 worldPos;
+        public Vector2 WorldPos { get { return worldPos; } }
         protected float scale = 1.0f;
         protected float layer = 1.0f;
         protected Color colour = Color.White;
@@ -28,14 +29,15 @@ namespace Operation_Search_Tree
             this.sprite = sprite;
             this.worldPos = worldPos;
             rect = new Rectangle(0, 0, sprite.Width, sprite.Height);
+            origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
         }
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
 
         }
 
-        public void Draw(SpriteBatch _spriteBatch)
+        public virtual void Draw(SpriteBatch _spriteBatch)
         {
             if (sprite != null)
             {

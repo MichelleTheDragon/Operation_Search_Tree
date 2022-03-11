@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,6 +15,10 @@ namespace Operation_Search_Tree
         {
             foreach (GameObject myGameObject in myGameObjects)
             {
+                if (myGameObject.GetType().Equals(typeof(Node)))
+                {
+                    ((Node)myGameObject).Update(gameTime);//, Mouse.GetState());
+                }
                 myGameObject.Update(gameTime);
             }
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 namespace Operation_Search_Tree
@@ -11,9 +12,10 @@ namespace Operation_Search_Tree
         private SpriteBatch _spriteBatch;
 
         private List<Scene> myScenes = new List<Scene>();
-        public int SceneNumber { get; set; } = 0;
+        public int SceneNumber { get; set; } = 1;
 
         private Texture2D background;
+        private static Texture2D aPixelSprite;
 
         public GameWorld()
         {
@@ -38,6 +40,9 @@ namespace Operation_Search_Tree
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             background = Content.Load<Texture2D>("Images/TTbg_darkwStars");
+            aPixelSprite = Content.Load<Texture2D>("Sprites/1px");
+            myScenes.Add(new MainMenu());
+            myScenes.Add(new NodeTree(Content, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2)));// - 200)));
             // TODO: use this.Content to load your game content here
         }
 
@@ -71,6 +76,17 @@ namespace Operation_Search_Tree
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+
+        public static void DrawLine(SpriteBatch spriteBatch, Vector2 begin, Vector2 end, Color color, int width = 1)
+        {
+            Rectangle r = new Rectangle((int)begin.X, (int)begin.Y, (int)(end - begin).Length() + width, width);
+            Vector2 v = Vector2.Normalize(begin - end);
+            float angle = (float)Math.Acos(Vector2.Dot(v, -Vector2.UnitX));
+            if (begin.Y > end.Y) { 
+                angle = MathHelper.TwoPi - angle; 
+            }
+            spriteBatch.Draw(aPixelSprite, r, null, color, angle, Vector2.Zero, SpriteEffects.None, 0);
         }
     }
 }
