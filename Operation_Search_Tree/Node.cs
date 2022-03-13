@@ -18,15 +18,24 @@ namespace Operation_Search_Tree
         public Color LastColour { get; protected set; } = Color.White;
         private Color resetColour = Color.White;
 
-        public Node(Texture2D sprite, Vector2 worldPos, float scale, int depth) : base(sprite, worldPos)
+        private Vector2 mainNode;
+        private float spawnAngleX;
+        private float spawnAngleY;
+        private float originalScale;
+
+        public Node(Texture2D sprite, Vector2 worldPos, float scale, int depth, Vector2 mainNode, float randomAngle) : base(sprite, worldPos)
         {
             this.depth = depth;
+            originalScale = scale;
             base.scale = scale;
             if (depth == 0)
             {
                 colour = Color.LightGreen;
                 resetColour = colour;
             }
+            this.mainNode = mainNode;
+            spawnAngleX = (float)Math.Cos(randomAngle);
+            spawnAngleY = (float)Math.Sin(randomAngle);
 
             //RngColour();
         }
@@ -37,18 +46,18 @@ namespace Operation_Search_Tree
 
             MouseState mouseState = Mouse.GetState();
             Point mousePoint = new Point(mouseState.X, mouseState.Y);
-            Rectangle rectangle = new Rectangle((int)worldPos.X - 10, (int)worldPos.Y - 10, 20, 20);
+            Rectangle rectangle = new Rectangle((int)WorldPos.X - 10, (int)WorldPos.Y - 10, 20, 20);
             //if(Math.Sqrt(Math.Pow(mousePoint.X - rectangle.X, 2) + Math.Pow(mousePoint.Y - rectangle.Y, 2)) < 30.0f)
             //{
 
             //}
 
-            if (rectangle.Contains(mousePoint) && depth > 0 && isHovered != true)
+            if (rectangle.Contains(mousePoint) && depth > 0 && isHovered != true && mouseState.LeftButton == ButtonState.Released)
             {
                 isHovered = true;
                 LastColour = colour;
                 colour = Color.LightBlue;
-            }
+            } 
             else if(!rectangle.Contains(mousePoint) && isHovered == true)
             {
                 colour = LastColour;
@@ -80,6 +89,12 @@ namespace Operation_Search_Tree
         public void ResetColour()
         {
             colour = resetColour;
+        }
+
+        public void ChangeDistanceToCenter(float zoom)
+        {
+            WorldPos = new Vector2(mainNode.X + (NodeTree.DistanceBetweenDepth * depth * zoom * spawnAngleX), mainNode.Y + (NodeTree.DistanceBetweenDepth * depth * zoom * spawnAngleY));
+            scale = originalScale * zoom;
         }
 
         public void RngColour()

@@ -10,12 +10,15 @@ namespace Operation_Search_Tree
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        //public static Camera MyCamera { get; private set; }
 
-        private List<Scene> myScenes = new List<Scene>();
-        public int SceneNumber { get; set; } = 1;
+        private static List<Scene> myScenes = new List<Scene>();
+        public static int SceneNumber { get; set; } = 1;
 
         private Texture2D background;
         private static Texture2D aPixelSprite;
+        private SpriteFont baseFont;
+        private UI myUI;
 
         public GameWorld()
         {
@@ -38,11 +41,18 @@ namespace Operation_Search_Tree
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            //MyCamera = new Camera(GraphicsDevice.Viewport);
 
             background = Content.Load<Texture2D>("Images/TTbg_darkwStars");
             aPixelSprite = Content.Load<Texture2D>("Sprites/1px");
+            baseFont = Content.Load<SpriteFont>("Fonts/Base");
+
+            //Scenes
             myScenes.Add(new MainMenu());
             myScenes.Add(new NodeTree(Content, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2)));// - 200)));
+
+            myUI = new UI(baseFont);
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -55,6 +65,7 @@ namespace Operation_Search_Tree
             {
                 myScenes[SceneNumber].Update(gameTime);
             }
+            //MyCamera.UpdateCamera(GraphicsDevice.Viewport);
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -73,6 +84,10 @@ namespace Operation_Search_Tree
                 myScenes[SceneNumber].Draw(_spriteBatch);
             }
 
+            _spriteBatch.Begin();
+            myUI.Draw(_spriteBatch);
+            _spriteBatch.End();
+
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
@@ -88,5 +103,13 @@ namespace Operation_Search_Tree
             }
             spriteBatch.Draw(aPixelSprite, r, null, color, angle, Vector2.Zero, SpriteEffects.None, 0);
         }
+
+        //public static void UpdateAllRects()
+        //{
+        //    foreach (GameObject myGameObject in myScenes[SceneNumber].MyGameObjects)
+        //    {
+        //        myGameObject.UpdateRect();
+        //    }
+        //}
     }
 }

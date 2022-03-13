@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Operation_Search_Tree
 {
-    class NodeTree : Scene
+    public class NodeTree : Scene
     {
         private Texture2D nodeSprite;
         private Node startNode;
@@ -18,8 +18,8 @@ namespace Operation_Search_Tree
         private bool keyDownSpace;
         private static List<Node> nodeset = new List<Node>();
         public List<Node> Nodeset { get { return nodeset; } }
-        private List<Vector2[]> nodesConnected = new List<Vector2[]>();
-        private List<Vector2[]> pathChosen = new List<Vector2[]>();
+        private List<Node[]> nodesConnected = new List<Node[]>();
+        private List<Node[]> pathChosen = new List<Node[]>();
         public List<SlowColours> VisualPath = new List<SlowColours>();
 
         public static Node goal;
@@ -27,28 +27,34 @@ namespace Operation_Search_Tree
         private bool visualizeColours;
         private int colourShown = 0;
         private float colourTimer = 0.0f;
-        private bool drawFastestPath;
+        private static bool drawFastestPath;
         private int searchMethod = 0;
         public static bool isRunning { get; protected set; }
+        public float Zoom { get; set; } = 1.0f;
+        private float currentMouseWheelValue, previousMouseWheelValue, zoom, previousZoom;
+
+        public static float DistanceBetweenDepth { get; protected set; } = 80.0f;
+        private bool resetZoom;
+        private bool drawNodesOkay;
 
         public NodeTree(ContentManager Content, Vector2 startNodePos)
         {
             this.startNodePos = startNodePos;
             nodeSprite = Content.Load<Texture2D>("Sprites/Node");
-            GenerateNodes(5, true);
+            GenerateNodes(15, true);
             mySearchTree = new SearchTrees();
         }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
+            UpdateZoom();
             if (visualizeColours)
             {
+                VisualPath[colourShown].NodetoColour.ChangeColour(VisualPath[colourShown].Colour);
+                colourShown++;
                 if (colourTimer > 0.1f)
                 {
-                    VisualPath[colourShown].NodetoColour.ChangeColour(VisualPath[colourShown].Colour);
-                    colourShown++;
                     colourTimer = 0.0f;
                 }
                 else
@@ -67,7 +73,7 @@ namespace Operation_Search_Tree
             KeyboardState state = Keyboard.GetState();
             if (state.IsKeyDown(Keys.R) && !keyDownR)
             {
-                GenerateNodes(5, true);
+                GenerateNodes(8, true);
                 keyDownR = true;
             } else if (state.IsKeyUp(Keys.R) && keyDownR)
             {
@@ -76,6 +82,7 @@ namespace Operation_Search_Tree
 
             if (state.IsKeyDown(Keys.Space) && !keyDownSpace && goal != null && !isRunning)
             {
+                CleanNodes(Color.Blue);
                 VisualPath = new List<SlowColours>();
                 List<Node> newPath = new List<Node>();
                 switch (searchMethod)
@@ -87,12 +94,12 @@ namespace Operation_Search_Tree
                         newPath = mySearchTree.BreadthFirstSearch(Nodeset, goal, VisualPath);
                         break;
                 }
-                pathChosen = new List<Vector2[]>();
+                pathChosen = new List<Node[]>();
                 foreach (Node pathStep in newPath)
                 {
                     if (pathStep.Depth > 0)
                     {
-                        pathChosen.Add(new Vector2[] { pathStep.Edges[0].To.WorldPos, pathStep.Edges[0].From.WorldPos });
+                        pathChosen.Add(new Node[] { pathStep.Edges[0].To, pathStep.Edges[0].From });
                         VisualPath.Add(new SlowColours(pathStep.Edges[0].To, Color.Blue));
                     }
                 }
@@ -111,7 +118,7 @@ namespace Operation_Search_Tree
         {
             from.AddEdge(to);
             to.AddEdge(from);
-            nodesConnected.Add(new Vector2[] { from.WorldPos, to.WorldPos });
+            nodesConnected.Add(new Node[] { from, to });
         }
 
         public void ConnectNodes()
@@ -189,36 +196,46 @@ namespace Operation_Search_Tree
 
         public override void Draw(SpriteBatch _spriteBatch)
         {
-            _spriteBatch.Begin();
-            foreach (Vector2[] nodeConnected in nodesConnected)
+            _spriteBatch.Begin();// SpriteSortMode.Immediate, null, null, null, null, null, GameWorld.MyCamera.Transform);
+            if (drawNodesOkay)
             {
-                GameWorld.DrawLine(_spriteBatch, nodeConnected[0], nodeConnected[1], Color.White, 3);
+                foreach (Node[] nodeConnected in nodesConnected)
+                {
+                    GameWorld.DrawLine(_spriteBatch, nodeConnected[0].WorldPos, nodeConnected[1].WorldPos, Color.White, 2);
+                }
             }
             if (drawFastestPath)
             {
-                foreach (Vector2[] pathLine in pathChosen)
+                foreach (Node[] pathLine in pathChosen)
                 {
-                    GameWorld.DrawLine(_spriteBatch, pathLine[1], pathLine[0], Color.Blue, 3);
+                    GameWorld.DrawLine(_spriteBatch, pathLine[1].WorldPos, pathLine[0].WorldPos, Color.Blue, 2);
                 }
             }
-            _spriteBatch.End();
-            base.Draw(_spriteBatch);
+            _spriteBatch.End(); 
+            if (drawNodesOkay)
+            {
+                base.Draw(_spriteBatch); //, GameWorld.MyCamera.Transform);
+            }
         }
 
         public void GenerateNodes(int maxDepth, bool isBothWay)
         {
-            myGameObjects = new List<GameObject>();
+            MyGameObjects = new List<GameObject>();
             nodeset = new List<Node>(); 
-            nodesConnected = new List<Vector2[]>();
+            nodesConnected = new List<Node[]>();
             drawFastestPath = false;
             goal = null;
+            Zoom = 5.0f / (float)maxDepth;
+            resetZoom = true;
+            visualizeColours = false;
+            drawNodesOkay = false;
 
-            startNode = new Node(nodeSprite, startNodePos, 0.5f, 0);
-            myGameObjects.Add(startNode);
+            startNode = new Node(nodeSprite, startNodePos, 0.5f, 0, startNodePos, 0);
+            MyGameObjects.Add(startNode);
             nodeset.Add(startNode);
             for (int i = 0; i < maxDepth; i++)
             {
-                int randomAmountofNodes = rngAmount.Next((3 * i) + 1, 10 + i * 3);
+                int randomAmountofNodes = rngAmount.Next((3 * i) + 3, 10 + i * 3);
                 List<Node> myNodePositions = new List<Node>();
                 for (int j = 0; j < randomAmountofNodes; j++)
                 {
@@ -236,7 +253,7 @@ namespace Operation_Search_Tree
                         randomAngle = (float)(rngAmount.NextDouble() * Math.PI * 2);
                         float myAngleX = (float)Math.Cos(randomAngle);
                         float myAngleY = (float)Math.Sin(randomAngle);
-                        newNodePos = new Vector2(startNodePos.X + (80 * (i + 1) * myAngleX), startNodePos.Y + (80 * (i + 1) * myAngleY));
+                        newNodePos = new Vector2(startNodePos.X + (DistanceBetweenDepth * (i + 1) * myAngleX), startNodePos.Y + (DistanceBetweenDepth * (i + 1) * myAngleY));
                         foreach (Node myNodePosition in myNodePositions)
                         {
                             if (Math.Sqrt(Math.Pow(newNodePos.X - myNodePosition.WorldPos.X, 2) + Math.Pow(newNodePos.Y - myNodePosition.WorldPos.Y, 2)) < 30.0f)
@@ -266,9 +283,9 @@ namespace Operation_Search_Tree
                     }
                     if (foundPlacement)
                     {
-                        Node newNode = new Node(nodeSprite, newNodePos, rngAmount.Next(25, 35) * 0.01f, i + 1);
+                        Node newNode = new Node(nodeSprite, newNodePos, rngAmount.Next(25, 35) * 0.01f, i + 1, startNode.WorldPos, randomAngle);
                         myNodePositions.Add(newNode);
-                        myGameObjects.Add(newNode); //temp
+                        MyGameObjects.Add(newNode); //temp
                         nodeset.Add(newNode);
                     }
                 }
@@ -280,14 +297,66 @@ namespace Operation_Search_Tree
         {
             if (goal != null)
             {
-                goal.ChangeColour(Color.White);
-                foreach (Node newNode in nodeset)
-                {
-                    newNode.ResetColour();
-                }
+                CleanNodes(Color.White);
             }
 
             goal = myNode;
+        }
+
+        public static void CleanNodes(Color color)
+        {
+            foreach (Node newNode in nodeset)
+            {
+                newNode.ResetColour();
+            }
+            if (goal != null)
+            {
+                goal.ChangeColour(color);
+            }
+            drawFastestPath = false;
+        }
+
+        public void UpdateZoom()
+        {
+            previousMouseWheelValue = currentMouseWheelValue;
+            currentMouseWheelValue = Mouse.GetState().ScrollWheelValue;
+
+            if (currentMouseWheelValue > previousMouseWheelValue)
+            {
+                AdjustZoom(.05f);
+            }
+
+            if (currentMouseWheelValue < previousMouseWheelValue)
+            {
+                AdjustZoom(-.05f);
+            }
+
+            previousZoom = zoom;
+            zoom = Zoom;
+            if (previousZoom != zoom || resetZoom)
+            {
+                foreach (Node myNode in nodeset)
+                {
+                    myNode.ChangeDistanceToCenter(zoom);
+                }
+                if (resetZoom)
+                {
+                    drawNodesOkay = true;
+                    resetZoom = false;
+                }
+            }
+        }
+        public void AdjustZoom(float zoomAmount)
+        {
+            Zoom += zoomAmount;
+            if (Zoom < .20f)
+            {
+                Zoom = .20f;
+            }
+            if (Zoom > 2f)
+            {
+                Zoom = 2f;
+            }
         }
     }
 

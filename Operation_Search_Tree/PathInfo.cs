@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Operation_Search_Tree
 {
-    public class PathInfo
+    public class PathInfo : GameObject
     {
         private List<Node> myPath = new List<Node>();
         public List<Node> MyPath { get { return myPath; } }

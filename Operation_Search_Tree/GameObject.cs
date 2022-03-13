@@ -10,8 +10,8 @@ namespace Operation_Search_Tree
     {
         protected Texture2D sprite;
         protected Rectangle rect;
-        protected Vector2 worldPos;
-        public Vector2 WorldPos { get { return worldPos; } }
+        //protected Vector2 worldPos;
+        public Vector2 WorldPos { get; protected set; }
         protected float scale = 1.0f;
         protected float layer = 1.0f;
         protected Color colour = Color.White;
@@ -27,7 +27,7 @@ namespace Operation_Search_Tree
         public GameObject(Texture2D sprite, Vector2 worldPos)
         {
             this.sprite = sprite;
-            this.worldPos = worldPos;
+            WorldPos = worldPos;
             rect = new Rectangle(0, 0, sprite.Width, sprite.Height);
             origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
         }
@@ -41,7 +41,16 @@ namespace Operation_Search_Tree
         {
             if (sprite != null)
             {
-                _spriteBatch.Draw(sprite, worldPos, rect, colour, rotation, origin, scale, effects, layer);
+                _spriteBatch.Draw(sprite, WorldPos, rect, colour, rotation, origin, scale, effects, layer);
+            }
+        }
+
+        public void UpdateRect()
+        {
+            if (sprite != null)
+            {
+                rect = new Rectangle(0, 0, sprite.Width, sprite.Height);
+                origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
             }
         }
     }

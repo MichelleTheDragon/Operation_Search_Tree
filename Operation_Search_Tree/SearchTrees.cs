@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Operation_Search_Tree
 {
-    public class SearchTrees
+    public class SearchTrees : GameObject
     {
         public List<Node> BreadthFirstSearch(List<Node> myNodes, Node goal, List<SlowColours> visualPath)
         {

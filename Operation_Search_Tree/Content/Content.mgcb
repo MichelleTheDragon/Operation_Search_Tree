@@ -13,6 +13,13 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Fonts/Base.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Base.spritefont
+
 #begin Images/TTbg_darkwStars.png
 /importer:TextureImporter
 /processor:TextureProcessor
