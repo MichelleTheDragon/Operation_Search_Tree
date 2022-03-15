@@ -44,5 +44,86 @@ namespace Operation_Search_Tree
             }
             return null;
         }
+
+        //public List<Node> DepthFirstSearch(List<Node> myNodes, Node goal, List<SlowColours> visualPath)
+        //{
+        //    if (myNodes.Count == 0)
+        //    {
+        //        return null;
+        //    }
+        //    List<PathInfo> someNodes = new List<PathInfo>();
+        //    List<PathInfo> someNodes2 = new List<PathInfo>();
+        //    List<Node> alreadyChecked = new List<Node>();
+
+        //    someNodes.Add(new PathInfo(myNodes[0], new List<Node>()));
+        //    while (someNodes.Count > 0)
+        //    {
+                
+        //        someNodes[someNodes.Count - 1]
+        //    }
+
+        //    return null;
+        //}
+
+
+        public List<Node> DepthFirstSearch(List<Node> myList, Node myNode, Node goal, List<SlowColours> visualPath)
+        {
+            List<Node> visited = new List<Node>();
+            List<PathInfo> nodeStack = new List<PathInfo>();
+            List<Node> notPath = new List<Node>();
+            //List<Node> nodeStack = new List<Node>();
+            nodeStack.Add(new PathInfo(myNode, new List<Node>()));
+            while (nodeStack.Count > 0)
+            {
+                //System.Diagnostics.Debug.WriteLine(nodeStack.Count);
+                PathInfo newNode = nodeStack[nodeStack.Count - 1];
+                visited.Add(newNode.MyNode);
+                if (newNode.MyNode == goal)
+                {
+                    break;
+                }
+                nodeStack.Remove(newNode);
+                visualPath.Add(new SlowColours(newNode.MyNode, Color.Red));
+                int edgeCounter = 0;
+                foreach (Edge neighbor in newNode.MyNode.Edges)
+                {
+                    if (!visited.Contains(neighbor.To) && !notPath.Contains(neighbor.To))
+                    {
+                        nodeStack.Add(new PathInfo(neighbor.To, newNode.MyPath));
+                        edgeCounter++;
+                    }
+                }
+                if (edgeCounter == 0)
+                {
+                    visited.Remove(newNode.MyNode);
+                    notPath.Add(newNode.MyNode);
+                }
+            }
+            return visited;
+
+            //myList.Add(myNode);
+            //foreach (Edge value in myNode.Edges)
+            //{
+            //    if (!myList.Contains(value.To))
+            //    {
+            //        if (NodeTree.goalFound == true)
+            //        {
+            //            return myList;
+            //        }
+            //        if (myNode == goal)
+            //        {
+            //            NodeTree.goalFound = true;
+            //            //visualPath.Add(new SlowColours(myNode, Color.Blue));
+            //        }
+            //        else
+            //        {
+            //            //visualPath.Add(new SlowColours(myNode, Color.Red));
+            //            DepthFirstSearch(myList, value.To, goal, visualPath);
+            //        }
+
+            //    }
+            //}
+            //return null;
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace Operation_Search_Tree
 
         private Texture2D background;
         private static Texture2D aPixelSprite;
+        private Texture2D baseButton;
         private SpriteFont baseFont;
         private UI myUI;
 
@@ -46,12 +47,13 @@ namespace Operation_Search_Tree
             background = Content.Load<Texture2D>("Images/TTbg_darkwStars");
             aPixelSprite = Content.Load<Texture2D>("Sprites/1px");
             baseFont = Content.Load<SpriteFont>("Fonts/Base");
+            baseButton = Content.Load<Texture2D>("Sprites/1px");
 
             //Scenes
             myScenes.Add(new MainMenu());
             myScenes.Add(new NodeTree(Content, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2)));// - 200)));
 
-            myUI = new UI(baseFont);
+            myUI = new UI(baseFont, baseButton);
 
             // TODO: use this.Content to load your game content here
         }

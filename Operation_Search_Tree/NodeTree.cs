@@ -28,7 +28,7 @@ namespace Operation_Search_Tree
         private int colourShown = 0;
         private float colourTimer = 0.0f;
         private static bool drawFastestPath;
-        private int searchMethod = 0;
+        private int searchMethod = 1;
         public static bool isRunning { get; protected set; }
         public float Zoom { get; set; } = 1.0f;
         private float currentMouseWheelValue, previousMouseWheelValue, zoom, previousZoom;
@@ -36,6 +36,8 @@ namespace Operation_Search_Tree
         public static float DistanceBetweenDepth { get; protected set; } = 80.0f;
         private bool resetZoom;
         private bool drawNodesOkay;
+        public static bool goalFound { get; set; }
+        private bool autoRun = false;
 
         public NodeTree(ContentManager Content, Vector2 startNodePos)
         {
@@ -53,7 +55,7 @@ namespace Operation_Search_Tree
             {
                 VisualPath[colourShown].NodetoColour.ChangeColour(VisualPath[colourShown].Colour);
                 colourShown++;
-                if (colourTimer > 0.1f)
+                if (colourTimer > 0.01f)
                 {
                     colourTimer = 0.0f;
                 }
@@ -82,36 +84,44 @@ namespace Operation_Search_Tree
 
             if (state.IsKeyDown(Keys.Space) && !keyDownSpace && goal != null && !isRunning)
             {
-                CleanNodes(Color.Blue);
-                VisualPath = new List<SlowColours>();
-                List<Node> newPath = new List<Node>();
-                switch (searchMethod)
-                {
-                    case 0:
-                        newPath = mySearchTree.BreadthFirstSearch(Nodeset, goal, VisualPath);
-                        break;
-                    default:
-                        newPath = mySearchTree.BreadthFirstSearch(Nodeset, goal, VisualPath);
-                        break;
-                }
-                pathChosen = new List<Node[]>();
-                foreach (Node pathStep in newPath)
-                {
-                    if (pathStep.Depth > 0)
-                    {
-                        pathChosen.Add(new Node[] { pathStep.Edges[0].To, pathStep.Edges[0].From });
-                        VisualPath.Add(new SlowColours(pathStep.Edges[0].To, Color.Blue));
-                    }
-                }
-                visualizeColours = true;
-                colourShown = 0;
+                RunSearch();
                 keyDownSpace = true;
-                isRunning = true;
             }
             else if (state.IsKeyUp(Keys.Space) && keyDownSpace)
             {
                 keyDownSpace = false;
             }
+        }
+
+        public void RunSearch()
+        {
+            CleanNodes(Color.Blue);
+            VisualPath = new List<SlowColours>();
+            List<Node> newPath = new List<Node>();
+            switch (searchMethod)
+            {
+                case 0:
+                    newPath = mySearchTree.BreadthFirstSearch(Nodeset, goal, VisualPath);
+                    break;
+                case 1:
+                    newPath = mySearchTree.DepthFirstSearch(new List<Node>(), Nodeset[0], goal, VisualPath);
+                    break;
+                default:
+                    newPath = mySearchTree.BreadthFirstSearch(Nodeset, goal, VisualPath);
+                    break;
+            }
+            pathChosen = new List<Node[]>();
+            foreach (Node pathStep in newPath)
+            {
+                if (pathStep.Depth > 0)
+                {
+                    pathChosen.Add(new Node[] { pathStep.Edges[0].To, pathStep.Edges[0].From });
+                    VisualPath.Add(new SlowColours(pathStep.Edges[0].To, Color.Blue));
+                }
+            }
+            visualizeColours = true;
+            colourShown = 0;
+            isRunning = true;
         }
 
         public void AddEdge(Node from, Node to)
@@ -210,6 +220,12 @@ namespace Operation_Search_Tree
                 {
                     GameWorld.DrawLine(_spriteBatch, pathLine[1].WorldPos, pathLine[0].WorldPos, Color.Blue, 2);
                 }
+                if (autoRun)
+                {
+                    GenerateNodes(rngAmount.Next(5, 16), true);
+                    ChangeGoal(nodeset[rngAmount.Next(1, nodeset.Count)]);
+                    RunSearch();
+                }
             }
             _spriteBatch.End(); 
             if (drawNodesOkay)
@@ -229,6 +245,8 @@ namespace Operation_Search_Tree
             resetZoom = true;
             visualizeColours = false;
             drawNodesOkay = false;
+            isRunning = false;
+            goalFound = false;
 
             startNode = new Node(nodeSprite, startNodePos, 0.5f, 0, startNodePos, 0);
             MyGameObjects.Add(startNode);

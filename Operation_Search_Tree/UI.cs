@@ -10,11 +10,14 @@ namespace Operation_Search_Tree
     {
         private SpriteFont baseFont;
         private List<UIText> myTexts = new List<UIText>();
+        private List<Button> myButtons = new List<Button>();
+        //private Texture2D baseButton;
 
-        public UI(SpriteFont baseFont)
+        public UI(SpriteFont baseFont, Texture2D baseButton)
         {
             this.baseFont = baseFont;
-            myTexts.Add(new UIText(baseFont, new Vector2(10, 10), "Hello!"));
+            //myTexts.Add(new UIText(baseFont, new Vector2(20, 20), "Hello!"));
+            myButtons.Add(new Button(baseButton, new Vector2(150, 70), baseFont, "Testing..."));
         }
 
         public override void Draw(SpriteBatch _spriteBatch)
@@ -22,6 +25,10 @@ namespace Operation_Search_Tree
             foreach (UIText myText in myTexts)
             {
                 _spriteBatch.DrawString(myText.Font, myText.Text, myText.Pos, myText.Colour);
+            }
+            foreach (Button myButton in myButtons)
+            {
+                myButton.Draw(_spriteBatch);
             }
         }
     }
