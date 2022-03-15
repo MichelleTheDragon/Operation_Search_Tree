@@ -104,7 +104,7 @@ namespace Operation_Search_Tree
                     newPath = mySearchTree.BreadthFirstSearch(Nodeset, goal, VisualPath);
                     break;
                 case 1:
-                    newPath = mySearchTree.DepthFirstSearch(new List<Node>(), Nodeset[0], goal, VisualPath);
+                    newPath = mySearchTree.DepthFirstSearch(Nodeset, Nodeset[0], goal, VisualPath);
                     break;
                 default:
                     newPath = mySearchTree.BreadthFirstSearch(Nodeset, goal, VisualPath);

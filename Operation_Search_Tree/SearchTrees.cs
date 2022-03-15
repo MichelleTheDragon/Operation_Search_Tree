@@ -68,62 +68,38 @@ namespace Operation_Search_Tree
 
         public List<Node> DepthFirstSearch(List<Node> myList, Node myNode, Node goal, List<SlowColours> visualPath)
         {
+            if (myList.Count == 0)
+            {
+                return null;
+            }
             List<Node> visited = new List<Node>();
             List<PathInfo> nodeStack = new List<PathInfo>();
-            List<Node> notPath = new List<Node>();
-            //List<Node> nodeStack = new List<Node>();
+
             nodeStack.Add(new PathInfo(myNode, new List<Node>()));
             while (nodeStack.Count > 0)
             {
-                //System.Diagnostics.Debug.WriteLine(nodeStack.Count);
                 PathInfo newNode = nodeStack[nodeStack.Count - 1];
                 visited.Add(newNode.MyNode);
+                visualPath.Add(new SlowColours(newNode.MyNode, Color.Red));
+
                 if (newNode.MyNode == goal)
                 {
-                    break;
+                    //System.Diagnostics.Debug.WriteLine(newNode.MyPath.Count);
+                    visualPath.Add(new SlowColours(newNode.MyNode, Color.Blue));
+                    return newNode.MyPath;
                 }
-                nodeStack.Remove(newNode);
-                visualPath.Add(new SlowColours(newNode.MyNode, Color.Red));
-                int edgeCounter = 0;
+
                 foreach (Edge neighbor in newNode.MyNode.Edges)
                 {
-                    if (!visited.Contains(neighbor.To) && !notPath.Contains(neighbor.To))
+                    if (!visited.Contains(neighbor.To))
                     {
-                        nodeStack.Add(new PathInfo(neighbor.To, newNode.MyPath));
-                        edgeCounter++;
+                        visualPath.Add(new SlowColours(neighbor.To, Color.Yellow));
+                        nodeStack.Add(new PathInfo(neighbor.To, new List<Node>(newNode.MyPath)));
                     }
                 }
-                if (edgeCounter == 0)
-                {
-                    visited.Remove(newNode.MyNode);
-                    notPath.Add(newNode.MyNode);
-                }
+                nodeStack.Remove(newNode);
             }
-            return visited;
-
-            //myList.Add(myNode);
-            //foreach (Edge value in myNode.Edges)
-            //{
-            //    if (!myList.Contains(value.To))
-            //    {
-            //        if (NodeTree.goalFound == true)
-            //        {
-            //            return myList;
-            //        }
-            //        if (myNode == goal)
-            //        {
-            //            NodeTree.goalFound = true;
-            //            //visualPath.Add(new SlowColours(myNode, Color.Blue));
-            //        }
-            //        else
-            //        {
-            //            //visualPath.Add(new SlowColours(myNode, Color.Red));
-            //            DepthFirstSearch(myList, value.To, goal, visualPath);
-            //        }
-
-            //    }
-            //}
-            //return null;
+            return myList;
         }
     }
 }

@@ -20,6 +20,16 @@ namespace Operation_Search_Tree
             myButtons.Add(new Button(baseButton, new Vector2(150, 70), baseFont, "Testing..."));
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            //base.Update(gameTime);
+
+            foreach (Button myButton in myButtons)
+            {
+                myButton.Update(gameTime);
+            }
+        }
+
         public override void Draw(SpriteBatch _spriteBatch)
         {
             foreach (UIText myText in myTexts)

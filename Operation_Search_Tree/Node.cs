@@ -47,10 +47,6 @@ namespace Operation_Search_Tree
             MouseState mouseState = Mouse.GetState();
             Point mousePoint = new Point(mouseState.X, mouseState.Y);
             Rectangle rectangle = new Rectangle((int)WorldPos.X - 10, (int)WorldPos.Y - 10, 20, 20);
-            //if(Math.Sqrt(Math.Pow(mousePoint.X - rectangle.X, 2) + Math.Pow(mousePoint.Y - rectangle.Y, 2)) < 30.0f)
-            //{
-
-            //}
 
             if (rectangle.Contains(mousePoint) && depth > 0 && isHovered != true && mouseState.LeftButton == ButtonState.Released)
             {
