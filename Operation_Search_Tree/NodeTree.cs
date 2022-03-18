@@ -16,6 +16,8 @@ namespace Operation_Search_Tree
         private Vector2 startNodePos;
         private bool keyDownR;
         private bool keyDownSpace;
+        private bool keyDownRight;
+        private bool keyDownLeft;
         private static List<Node> nodeset = new List<Node>();
         public List<Node> Nodeset { get { return nodeset; } }
         private List<Node[]> nodesConnected = new List<Node[]>();
@@ -25,11 +27,11 @@ namespace Operation_Search_Tree
         public static Node goal;
         private SearchTrees mySearchTree;
         private bool visualizeColours;
-        private int colourShown = 0;
+        private int colourShown = -1;
         private float colourTimer = 0.0f;
         private static bool drawFastestPath;
-        private int searchMethod = 1;
-        public static bool isRunning { get; protected set; }
+        private int searchMethod = 0;
+        public static bool IsRunning { get; protected set; }
         public float Zoom { get; set; } = 1.0f;
         private float currentMouseWheelValue, previousMouseWheelValue, zoom, previousZoom;
 
@@ -37,7 +39,16 @@ namespace Operation_Search_Tree
         private bool resetZoom;
         private bool drawNodesOkay;
         public static bool goalFound { get; set; }
-        private bool autoRun = false;
+        private bool autoRun = true;
+        private bool stepByStep = false;
+        private bool randomSearchTree = true;
+        private bool buttonHeldLeft;
+        private bool speedLeft;
+        private float speedLeftTimer;
+        private bool buttonHeldRight;
+        private bool speedRight;
+        private float speedRightTimer;
+        private float pathShowTimer;
 
         public NodeTree(ContentManager Content, Vector2 startNodePos)
         {
@@ -51,28 +62,105 @@ namespace Operation_Search_Tree
         {
             base.Update(gameTime);
             UpdateZoom();
+            KeyboardState state = Keyboard.GetState();
+
             if (visualizeColours)
             {
-                VisualPath[colourShown].NodetoColour.ChangeColour(VisualPath[colourShown].Colour);
-                colourShown++;
-                if (colourTimer > 0.01f)
+                if (stepByStep)
                 {
-                    colourTimer = 0.0f;
+                    if (((state.IsKeyDown(Keys.Right) && !keyDownRight) || speedRight) && colourShown < VisualPath.Count - 1)
+                    {
+                        colourShown++;
+                        VisualPath[colourShown].NodetoColour.ChangeColour(VisualPath[colourShown].Colour);
+                        keyDownRight = true;
+                        speedRight = false;
+                        buttonHeldRight = true;
+                    }
+                    else if (state.IsKeyUp(Keys.Right) && keyDownRight)
+                    {
+                        keyDownRight = false;
+                        buttonHeldRight = false;
+                        speedRight = false;
+                        speedRightTimer = 0.0f;
+                    }
+
+
+                    if (((state.IsKeyDown(Keys.Left) && !keyDownLeft) || speedLeft) && colourShown > 1)
+                    {
+                        colourShown--;
+                        if (colourShown + 1 < VisualPath.Count)
+                        {
+                            if (VisualPath[colourShown].NodetoColour != VisualPath[colourShown + 1].NodetoColour)
+                            {
+                                VisualPath[colourShown].NodetoColour.ChangeColour(VisualPath[colourShown].Colour);
+                                VisualPath[colourShown + 1].NodetoColour.ResetColour();
+                            } else
+                            {
+                                VisualPath[colourShown].NodetoColour.ChangeColour(VisualPath[colourShown].Colour);
+                            }
+                        }
+                        else
+                        {
+                            VisualPath[colourShown].NodetoColour.ChangeColour(VisualPath[colourShown].Colour);
+                        }
+
+                        keyDownLeft = true;
+                        speedLeft = false;
+                        buttonHeldLeft = true;
+                    }
+                    else if (state.IsKeyUp(Keys.Left) && keyDownLeft)
+                    {
+                        keyDownLeft = false;
+                        buttonHeldLeft = false;
+                        speedLeft = false;
+                        speedLeftTimer = 0.0f;
+                    }
+
+                    if (buttonHeldLeft)
+                    {
+                        if (speedLeftTimer > 0.5f)
+                        {
+                            speedLeft = true;
+                            speedLeftTimer = 0.45f;
+                        }
+                        speedLeftTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    }
+                    if (buttonHeldRight)
+                    {
+                        if (speedRightTimer > 0.5f)
+                        {
+                            speedRight = true;
+                            speedRightTimer = 0.45f;
+                        }
+                        speedRightTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    }
                 }
                 else
                 {
-                    colourTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    if (colourTimer > 0.01f)
+                    {
+                        colourShown++;
+                        VisualPath[colourShown].NodetoColour.ChangeColour(VisualPath[colourShown].Colour);
+                        colourTimer = 0.0f;
+                    }
+                    else
+                    {
+                        colourTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    }
                 }
 
-                if (colourShown == VisualPath.Count)
+                if (colourShown == VisualPath.Count - 1)
                 {
                     drawFastestPath = true;
-                    isRunning = false;
+                    IsRunning = false;
                     visualizeColours = false;
                 }
             }
+            if (drawFastestPath)
+            {
+                pathShowTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
 
-            KeyboardState state = Keyboard.GetState();
             if (state.IsKeyDown(Keys.R) && !keyDownR)
             {
                 GenerateNodes(8, true);
@@ -82,7 +170,7 @@ namespace Operation_Search_Tree
                 keyDownR = false;
             }
 
-            if (state.IsKeyDown(Keys.Space) && !keyDownSpace && goal != null && !isRunning)
+            if (state.IsKeyDown(Keys.Space) && !keyDownSpace && goal != null && !IsRunning)
             {
                 RunSearch();
                 keyDownSpace = true;
@@ -111,17 +199,14 @@ namespace Operation_Search_Tree
                     break;
             }
             pathChosen = new List<Node[]>();
-            foreach (Node pathStep in newPath)
+            for (int i = 1; i < newPath.Count; i++)
             {
-                if (pathStep.Depth > 0)
-                {
-                    pathChosen.Add(new Node[] { pathStep.Edges[0].To, pathStep.Edges[0].From });
-                    VisualPath.Add(new SlowColours(pathStep.Edges[0].To, Color.Blue));
-                }
+                pathChosen.Add(new Node[] { newPath[i - 1], newPath[i] });
+                VisualPath.Add(new SlowColours(newPath[i - 1], Color.Blue));
             }
             visualizeColours = true;
-            colourShown = 0;
-            isRunning = true;
+            colourShown = -1;
+            IsRunning = true;
         }
 
         public void AddEdge(Node from, Node to)
@@ -220,8 +305,13 @@ namespace Operation_Search_Tree
                 {
                     GameWorld.DrawLine(_spriteBatch, pathLine[1].WorldPos, pathLine[0].WorldPos, Color.Blue, 2);
                 }
-                if (autoRun)
+                if (autoRun && pathShowTimer >= 3.0f)
                 {
+                    pathShowTimer = 0.0f;
+                    if (randomSearchTree)
+                    {
+                        searchMethod = rngAmount.Next(0, 2);
+                    }
                     GenerateNodes(rngAmount.Next(5, 16), true);
                     ChangeGoal(nodeset[rngAmount.Next(1, nodeset.Count)]);
                     RunSearch();
@@ -245,7 +335,7 @@ namespace Operation_Search_Tree
             resetZoom = true;
             visualizeColours = false;
             drawNodesOkay = false;
-            isRunning = false;
+            IsRunning = false;
             goalFound = false;
 
             startNode = new Node(nodeSprite, startNodePos, 0.5f, 0, startNodePos, 0);

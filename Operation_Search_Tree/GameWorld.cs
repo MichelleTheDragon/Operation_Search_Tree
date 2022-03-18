@@ -34,6 +34,7 @@ namespace Operation_Search_Tree
 
             _graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height - 150; //sets the height of the window
             _graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width - 150; //sets the width of the window
+            //_graphics.ToggleFullScreen();
             _graphics.ApplyChanges(); //applies the changes
 
             base.Initialize();
@@ -86,9 +87,9 @@ namespace Operation_Search_Tree
                 myScenes[SceneNumber].Draw(_spriteBatch);
             }
 
-            _spriteBatch.Begin();
-            myUI.Draw(_spriteBatch);
-            _spriteBatch.End();
+            //_spriteBatch.Begin();
+            //myUI.Draw(_spriteBatch);
+            //_spriteBatch.End();
 
             // TODO: Add your drawing code here
 

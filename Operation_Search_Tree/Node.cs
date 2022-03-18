@@ -48,7 +48,7 @@ namespace Operation_Search_Tree
             Point mousePoint = new Point(mouseState.X, mouseState.Y);
             Rectangle rectangle = new Rectangle((int)WorldPos.X - 10, (int)WorldPos.Y - 10, 20, 20);
 
-            if (rectangle.Contains(mousePoint) && depth > 0 && isHovered != true && mouseState.LeftButton == ButtonState.Released)
+            if (rectangle.Contains(mousePoint) && depth > 0 && isHovered != true && mouseState.LeftButton == ButtonState.Released && !NodeTree.IsRunning)
             {
                 isHovered = true;
                 LastColour = colour;
@@ -60,7 +60,7 @@ namespace Operation_Search_Tree
                 isHovered = false;
             }
 
-            if (mouseState.LeftButton == ButtonState.Pressed && isHovered && !clickRegistered && !NodeTree.isRunning)
+            if (mouseState.LeftButton == ButtonState.Pressed && isHovered && !clickRegistered && !NodeTree.IsRunning)
             {
                 NodeTree.ChangeGoal(this);
 
