@@ -16,20 +16,40 @@ namespace Operation_Search_Tree
         private bool isHovered;
         private Color LastColour;
         private bool clickRegistered;
+        private Func<int> myFunc;
+        private bool buttonColoured;
+        private UI myUI;
+        private Color textColour = Color.Black;
 
-        public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font) : base(sprite, worldPos)
+        public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, Func<int> myFunc) : base(sprite, worldPos)
         {
             base.WorldPos = worldPos;
             this.font = font;
             //vectorScale = new Vector2(200.0f, 40.0f);
+            this.myFunc = myFunc;
         }
 
-        public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, string text) : base(sprite, worldPos)
+        public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, string text, int rectWidth, int rectHeight, Func<int> myFunc, bool canBeHeld) : base(sprite, worldPos)
         {
-            base.WorldPos = worldPos;
+            base.WorldPos = new Vector2(worldPos.X + rectWidth / 2, worldPos.Y + rectHeight / 2);
             this.font = font;
             this.text = text;
-            rect = new Rectangle(0,0,200, 40);
+            this.myFunc = myFunc;
+            buttonColoured = canBeHeld;
+            rect = new Rectangle(0, 0, rectWidth, rectHeight);
+            origin = new Vector2(rect.Size.X / 2, rect.Size.Y / 2);
+            textOrigin = new Vector2(font.MeasureString(text).X / 2, font.MeasureString(text).Y / 2);
+        }
+
+        public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, string text, int rectWidth, int rectHeight, Func<int> myFunc, bool canBeHeld, UI myUI) : base(sprite, worldPos)
+        {
+            base.WorldPos = new Vector2(worldPos.X + rectWidth / 2, worldPos.Y + rectHeight / 2);
+            this.font = font;
+            this.text = text;
+            this.myFunc = myFunc;
+            this.myUI = myUI;
+            buttonColoured = canBeHeld;
+            rect = new Rectangle(0, 0, rectWidth, rectHeight);
             origin = new Vector2(rect.Size.X / 2, rect.Size.Y / 2);
             textOrigin = new Vector2(font.MeasureString(text).X / 2, font.MeasureString(text).Y / 2);
         }
@@ -39,7 +59,7 @@ namespace Operation_Search_Tree
             base.Update(gameTime);
             MouseState mouseState = Mouse.GetState();
             Point mousePoint = new Point(mouseState.X, mouseState.Y);
-            Rectangle rectangle = new Rectangle((int)WorldPos.X - 10, (int)WorldPos.Y - 10, 20, 20);
+            Rectangle rectangle = new Rectangle((int)WorldPos.X - rect.Width/2, (int)WorldPos.Y - rect.Height/2, rect.Width, rect.Height);
 
             if (rectangle.Contains(mousePoint) && isHovered != true && mouseState.LeftButton == ButtonState.Released)
             {
@@ -55,9 +75,15 @@ namespace Operation_Search_Tree
 
             if (mouseState.LeftButton == ButtonState.Pressed && isHovered && !clickRegistered)
             {
+                myFunc();
+                if (buttonColoured)
+                {
+                    myUI.CleanSearchColours();
+                    colour = Color.Purple;
+                    textColour = Color.White;
+                    LastColour = colour;
+                }
                 clickRegistered = true;
-                colour = Color.Blue;
-                LastColour = colour;
             }
             else if (mouseState.LeftButton == ButtonState.Released && clickRegistered)
             {
@@ -65,10 +91,17 @@ namespace Operation_Search_Tree
             }
         }
 
+        public void CleanColour()
+        {
+            colour = Color.White;
+            LastColour = colour;
+            textColour = Color.Black;
+        }
+
         public override void Draw(SpriteBatch _spriteBatch)
         {
             base.Draw(_spriteBatch);
-            _spriteBatch.DrawString(font, text, WorldPos, Color.Black, rotation, textOrigin, textScale, effects, layer);
+            _spriteBatch.DrawString(font, text, WorldPos, textColour, rotation, textOrigin, textScale, effects, layer);
         }
     }
 }

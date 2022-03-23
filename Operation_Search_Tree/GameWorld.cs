@@ -52,9 +52,10 @@ namespace Operation_Search_Tree
 
             //Scenes
             myScenes.Add(new MainMenu());
-            myScenes.Add(new NodeTree(Content, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2)));// - 200)));
+            NodeTree newNodeTree = new NodeTree(Content, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2));
+            myScenes.Add(newNodeTree);// - 200)));
 
-            myUI = new UI(baseFont, baseButton);
+            myUI = new UI(baseFont, baseButton, newNodeTree, GraphicsDevice.Viewport);
 
             // TODO: use this.Content to load your game content here
         }
@@ -68,6 +69,8 @@ namespace Operation_Search_Tree
             {
                 myScenes[SceneNumber].Update(gameTime);
             }
+            myUI.Update(gameTime);
+
             //MyCamera.UpdateCamera(GraphicsDevice.Viewport);
             // TODO: Add your update logic here
 
@@ -87,9 +90,9 @@ namespace Operation_Search_Tree
                 myScenes[SceneNumber].Draw(_spriteBatch);
             }
 
-            //_spriteBatch.Begin();
-            //myUI.Draw(_spriteBatch);
-            //_spriteBatch.End();
+            _spriteBatch.Begin();
+            myUI.Draw(_spriteBatch);
+            _spriteBatch.End();
 
             // TODO: Add your drawing code here
 

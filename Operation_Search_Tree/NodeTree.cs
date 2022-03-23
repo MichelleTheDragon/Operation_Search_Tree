@@ -39,7 +39,7 @@ namespace Operation_Search_Tree
         private bool resetZoom;
         private bool drawNodesOkay;
         public static bool goalFound { get; set; }
-        private bool autoRun = true;
+        private bool autoRun = false;
         private bool stepByStep = false;
         private bool randomSearchTree = true;
         private bool buttonHeldLeft;
@@ -49,6 +49,7 @@ namespace Operation_Search_Tree
         private bool speedRight;
         private float speedRightTimer;
         private float pathShowTimer;
+        public int nodeDepth { get; set; } = 5;
 
         public NodeTree(ContentManager Content, Vector2 startNodePos)
         {
@@ -465,6 +466,61 @@ namespace Operation_Search_Tree
             {
                 Zoom = 2f;
             }
+        }
+
+        public int GenerateNew()
+        {
+            autoRun = false;
+            GenerateNodes(nodeDepth, true);
+            return 1;
+        }
+
+        public int DepthLower()
+        {
+            if (nodeDepth > 3)
+            {
+                nodeDepth--;
+            }
+            return 1;
+        }
+        public int DepthHigher()
+        {
+            if (nodeDepth < 30)
+            {
+                nodeDepth++;
+            }
+            return 1;
+        }
+
+        public int SetDFS()
+        {
+            searchMethod = 1;
+            return 1;
+        }
+
+        public int SetBFS()
+        {
+            searchMethod = 0;
+            return 1;
+        }
+
+
+        public int RunSearchButton()
+        {
+            if (goal != null && !IsRunning)
+            {
+                RunSearch();
+            }
+            return 1;
+        }
+
+        public int AutoRun()
+        {
+            GenerateNodes(rngAmount.Next(5, 16), true);
+            ChangeGoal(nodeset[rngAmount.Next(1, nodeset.Count)]);
+            RunSearch();
+            autoRun = true;
+            return 1;
         }
     }
 
