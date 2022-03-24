@@ -13,13 +13,14 @@ namespace Operation_Search_Tree
         private List<Button> myButtons = new List<Button>();
         private NodeTree nodeTreeScene;
         private List<Button> searchButtons = new List<Button>();
-        //private Texture2D baseButton;
 
         public UI(SpriteFont baseFont, Texture2D baseButton, NodeTree nodeTreeScene, Viewport myScreen)
         {
             this.baseFont = baseFont;
             this.nodeTreeScene = nodeTreeScene;
-            myButtons.Add(new Button(baseButton, new Vector2(50, 50), baseFont, "Generate Nodes", 250, 40, nodeTreeScene.GenerateNew, 0));
+
+            //Top Left buttons
+            myButtons.Add(new Button(baseButton, new Vector2(50, 50), baseFont, "Generate Nodes", 250, 40, nodeTreeScene.GenerateNew, 0)); 
             myTexts.Add(new UIText(baseFont, new Vector2(50, 105), "Depth: ", nodeTreeScene));
             myButtons.Add(new Button(baseButton, new Vector2(210, 100), baseFont, "-", 40, 40, nodeTreeScene.DepthLower, 0));
             myButtons.Add(new Button(baseButton, new Vector2(260, 100), baseFont, "+", 40, 40, nodeTreeScene.DepthHigher, 0));
@@ -32,14 +33,17 @@ namespace Operation_Search_Tree
             searchButtons.Add(newButton2);
 
             myButtons.Add(new Button(baseButton, new Vector2(50, 200), baseFont, "Start Search", 250, 40, nodeTreeScene.RunSearchButton, 0));
+
+            //Bottom buttons
             myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width/2 - 100, myScreen.Height - 80), baseFont, "Step by Step", 200, 40, nodeTreeScene.SetStepByStep, 2, this));
             myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width / 2 - 150, myScreen.Height - 80), baseFont, "-", 40, 40, nodeTreeScene.StepDown, 0));
             myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width / 2 + 110, myScreen.Height - 80), baseFont, "+", 40, 40, nodeTreeScene.StepUp, 0));
 
+            //Top right buttons
             myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width - 300, 50), baseFont, "Autorun", 250, 40, nodeTreeScene.AutoRun, 0));
         }
 
-        public void CleanSearchColours()
+        public void CleanSearchColours() //Makes sure the DFS and BFS buttons are white when not active
         {
             foreach (Button searchButton in searchButtons)
             {
@@ -80,7 +84,7 @@ namespace Operation_Search_Tree
         }
     }
 
-    class UIText : GameObject
+    class UIText : GameObject //A basic class that contains all the information needed for text visualization 
     {
         public SpriteFont Font { get; private set; }
         public Vector2 Pos { get; private set; } = Vector2.Zero;

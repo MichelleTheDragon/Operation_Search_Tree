@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Operation_Search_Tree
 {
-    public class Camera : GameObject
+    public class Camera : GameObject //#### NOT USED ####, basic camera with zoom function, has flaws
     {
         public float Zoom { get; set; }
         public Vector2 Position { get; set; }

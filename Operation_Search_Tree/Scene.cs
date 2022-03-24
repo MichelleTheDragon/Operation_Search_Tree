@@ -7,18 +7,17 @@ using System.Text;
 
 namespace Operation_Search_Tree
 {
-    public class Scene
+    public class Scene //The base scene, that all scenes needs in order to run
     {
-        //protected List<GameObject> myGameObjects = new List<GameObject>();
-        public List<GameObject> MyGameObjects { get; protected set; } = new List<GameObject>();
+        public List<GameObject> MyGameObjects { get; protected set; } = new List<GameObject>(); //all gameobjects in the scene
 
         public virtual void Update(GameTime gameTime)
         {
             foreach (GameObject myGameObject in MyGameObjects)
             {
-                if (myGameObject.GetType().Equals(typeof(Node)))
+                if (myGameObject.GetType().Equals(typeof(Node))) //if the gameobject is of the subclass Node
                 {
-                    ((Node)myGameObject).Update(gameTime);//, Mouse.GetState());
+                    ((Node)myGameObject).Update(gameTime); //Update Node
                 }
                 myGameObject.Update(gameTime);
             }
@@ -35,16 +34,5 @@ namespace Operation_Search_Tree
 
             _spriteBatch.End();
         }
-        //public virtual void Draw(SpriteBatch _spriteBatch, Matrix cameraTransform)
-        //{
-        //    _spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, cameraTransform);
-
-        //    foreach (GameObject myGameObject in MyGameObjects)
-        //    {
-        //        myGameObject.Draw(_spriteBatch);
-        //    }
-
-        //    _spriteBatch.End();
-        //}
     }
 }

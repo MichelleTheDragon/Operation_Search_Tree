@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Operation_Search_Tree
 {
-    public class Edge : GameObject
+    public class Edge : GameObject //The connection between two nodes
     {
         private Node from;
         public Node From { get { return from; } }

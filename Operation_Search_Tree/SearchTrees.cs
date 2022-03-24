@@ -65,41 +65,47 @@ namespace Operation_Search_Tree
         //    return null;
         //}
 
-
+        /// <summary>
+        ///     Input a list of connected Nodes, and recieve a found path to the goal node from the start node.
+        /// </summary>
+        /// <param name="myList">All nodes</param>
+        /// <param name="myNode">Start Node</param>
+        /// <param name="goal">Goal Node</param>
+        /// <param name="visualPath">List of visual process</param>
+        /// <returns>The path to the goal</returns>
         public List<Node> DepthFirstSearch(List<Node> myList, Node myNode, Node goal, List<SlowColours> visualPath)
         {
-            if (myList.Count == 0)
+            if (myList.Count == 0) //In case of the list being empty
             {
                 return null;
             }
-            List<Node> visited = new List<Node>();
+            List<Node> visited = new List<Node>(); 
             List<PathInfo> nodeStack = new List<PathInfo>();
 
-            nodeStack.Add(new PathInfo(myNode, new List<Node>()));
+            nodeStack.Add(new PathInfo(myNode, new List<Node>())); //add the start Node
             while (nodeStack.Count > 0)
             {
-                PathInfo newNode = nodeStack[nodeStack.Count - 1];
-                visited.Add(newNode.MyNode);
-                visualPath.Add(new SlowColours(newNode.MyNode, Color.Red));
+                PathInfo newNode = nodeStack[nodeStack.Count - 1]; //set last Node in the list to the current node to check
+                visited.Add(newNode.MyNode); //Mark as checked
+                visualPath.Add(new SlowColours(newNode.MyNode, Color.Red)); //Mark (visually) as checked
 
-                if (newNode.MyNode == goal)
+                if (newNode.MyNode == goal) //check if the current node is the goal node
                 {
-                    //System.Diagnostics.Debug.WriteLine(newNode.MyPath.Count);
-                    visualPath.Add(new SlowColours(newNode.MyNode, Color.Blue));
-                    return newNode.MyPath;
+                    visualPath.Add(new SlowColours(newNode.MyNode, Color.Blue)); //Mark it (visually) as goal 
+                    return newNode.MyPath; //return the path it took to get there
                 }
 
-                foreach (Edge neighbor in newNode.MyNode.Edges)
+                foreach (Edge neighbor in newNode.MyNode.Edges) //look at all neighbors
                 {
-                    if (!visited.Contains(neighbor.To))
+                    if (!visited.Contains(neighbor.To)) //if it hasn't been checked before
                     {
-                        visualPath.Add(new SlowColours(neighbor.To, Color.Yellow));
-                        nodeStack.Add(new PathInfo(neighbor.To, new List<Node>(newNode.MyPath)));
+                        visualPath.Add(new SlowColours(neighbor.To, Color.Yellow)); //Mark it (visually) to be checked later
+                        nodeStack.Add(new PathInfo(neighbor.To, new List<Node>(newNode.MyPath))); //Add the Node to the list to check
                     }
                 }
-                nodeStack.Remove(newNode);
+                nodeStack.Remove(newNode); //remove the current Node from the list 
             }
-            return myList;
+            return myList; //in case of emergence spit out random stuff. should currently be unreachable
         }
     }
 }

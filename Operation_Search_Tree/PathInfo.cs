@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Operation_Search_Tree
 {
-    public class PathInfo : GameObject
+    public class PathInfo : GameObject //Class that contains past path information for a node
     {
         private List<Node> myPath = new List<Node>();
         public List<Node> MyPath { get { return myPath; } }
