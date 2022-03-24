@@ -19,21 +19,24 @@ namespace Operation_Search_Tree
         {
             this.baseFont = baseFont;
             this.nodeTreeScene = nodeTreeScene;
-            myButtons.Add(new Button(baseButton, new Vector2(50, 50), baseFont, "Generate Nodes", 250, 40, nodeTreeScene.GenerateNew, false));
+            myButtons.Add(new Button(baseButton, new Vector2(50, 50), baseFont, "Generate Nodes", 250, 40, nodeTreeScene.GenerateNew, 0));
             myTexts.Add(new UIText(baseFont, new Vector2(50, 105), "Depth: ", nodeTreeScene));
-            myButtons.Add(new Button(baseButton, new Vector2(210, 100), baseFont, "-", 40, 40, nodeTreeScene.DepthLower, false));
-            myButtons.Add(new Button(baseButton, new Vector2(260, 100), baseFont, "+", 40, 40, nodeTreeScene.DepthHigher, false));
+            myButtons.Add(new Button(baseButton, new Vector2(210, 100), baseFont, "-", 40, 40, nodeTreeScene.DepthLower, 0));
+            myButtons.Add(new Button(baseButton, new Vector2(260, 100), baseFont, "+", 40, 40, nodeTreeScene.DepthHigher, 0));
 
-            Button newButton1 = new Button(baseButton, new Vector2(50, 150), baseFont, "BFS", 125, 40, nodeTreeScene.SetBFS, true, this);
-            Button newButton2 = new Button(baseButton, new Vector2(175, 150), baseFont, "DFS", 125, 40, nodeTreeScene.SetDFS, true, this);
+            Button newButton1 = new Button(baseButton, new Vector2(50, 150), baseFont, "BFS", 125, 40, nodeTreeScene.SetBFS, 1, this);
+            Button newButton2 = new Button(baseButton, new Vector2(175, 150), baseFont, "DFS", 125, 40, nodeTreeScene.SetDFS, 1, this);
             myButtons.Add(newButton1);
             myButtons.Add(newButton2);
             searchButtons.Add(newButton1);
             searchButtons.Add(newButton2);
 
-            myButtons.Add(new Button(baseButton, new Vector2(50, 200), baseFont, "Start Search", 250, 40, nodeTreeScene.RunSearchButton, false));
+            myButtons.Add(new Button(baseButton, new Vector2(50, 200), baseFont, "Start Search", 250, 40, nodeTreeScene.RunSearchButton, 0));
+            myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width/2 - 100, myScreen.Height - 80), baseFont, "Step by Step", 200, 40, nodeTreeScene.SetStepByStep, 2, this));
+            myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width / 2 - 150, myScreen.Height - 80), baseFont, "-", 40, 40, nodeTreeScene.StepDown, 0));
+            myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width / 2 + 110, myScreen.Height - 80), baseFont, "+", 40, 40, nodeTreeScene.StepUp, 0));
 
-            myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width - 300, 50), baseFont, "Autorun", 250, 40, nodeTreeScene.AutoRun, false));
+            myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width - 300, 50), baseFont, "Autorun", 250, 40, nodeTreeScene.AutoRun, 0));
         }
 
         public void CleanSearchColours()

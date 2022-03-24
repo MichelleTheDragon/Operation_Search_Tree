@@ -164,7 +164,7 @@ namespace Operation_Search_Tree
 
             if (state.IsKeyDown(Keys.R) && !keyDownR)
             {
-                GenerateNodes(8, true);
+                GenerateNodes(nodeDepth, true);
                 keyDownR = true;
             } else if (state.IsKeyUp(Keys.R) && keyDownR)
             {
@@ -511,6 +511,28 @@ namespace Operation_Search_Tree
             {
                 RunSearch();
             }
+            return 1;
+        }
+
+        public int SetStepByStep()
+        {
+            stepByStep = !stepByStep;
+            if (stepByStep)
+            {
+                return 1;
+            }
+            return 0;
+        }
+
+        public int StepDown()
+        {
+            speedLeft = true;
+            return 1;
+        }
+
+        public int StepUp()
+        {
+            speedRight = true;
             return 1;
         }
 

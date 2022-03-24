@@ -17,7 +17,7 @@ namespace Operation_Search_Tree
         private Color LastColour;
         private bool clickRegistered;
         private Func<int> myFunc;
-        private bool buttonColoured;
+        private int buttonColoured;
         private UI myUI;
         private Color textColour = Color.Black;
 
@@ -29,7 +29,7 @@ namespace Operation_Search_Tree
             this.myFunc = myFunc;
         }
 
-        public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, string text, int rectWidth, int rectHeight, Func<int> myFunc, bool canBeHeld) : base(sprite, worldPos)
+        public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, string text, int rectWidth, int rectHeight, Func<int> myFunc, int canBeHeld) : base(sprite, worldPos)
         {
             base.WorldPos = new Vector2(worldPos.X + rectWidth / 2, worldPos.Y + rectHeight / 2);
             this.font = font;
@@ -41,7 +41,7 @@ namespace Operation_Search_Tree
             textOrigin = new Vector2(font.MeasureString(text).X / 2, font.MeasureString(text).Y / 2);
         }
 
-        public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, string text, int rectWidth, int rectHeight, Func<int> myFunc, bool canBeHeld, UI myUI) : base(sprite, worldPos)
+        public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, string text, int rectWidth, int rectHeight, Func<int> myFunc, int canBeHeld, UI myUI) : base(sprite, worldPos)
         {
             base.WorldPos = new Vector2(worldPos.X + rectWidth / 2, worldPos.Y + rectHeight / 2);
             this.font = font;
@@ -75,13 +75,30 @@ namespace Operation_Search_Tree
 
             if (mouseState.LeftButton == ButtonState.Pressed && isHovered && !clickRegistered)
             {
-                myFunc();
-                if (buttonColoured)
+                if (buttonColoured == 1)
                 {
+                    myFunc();
                     myUI.CleanSearchColours();
                     colour = Color.Purple;
                     textColour = Color.White;
                     LastColour = colour;
+                } else if(buttonColoured == 2)
+                {
+                    if (myFunc() == 1)
+                    {
+                        colour = Color.Purple;
+                        textColour = Color.White;
+                        LastColour = colour;
+                    } else
+                    {
+                        colour = Color.White;
+                        textColour = Color.Black;
+                        LastColour = colour;
+                    }
+                }
+                else
+                {
+                    myFunc();
                 }
                 clickRegistered = true;
             }
