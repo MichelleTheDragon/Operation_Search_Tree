@@ -7,6 +7,13 @@ namespace Operation_Search_Tree
 {
     public class SearchTrees : GameObject
     {
+        /// <summary>
+        ///     Input a list of connected Nodes, and recieve a found path to the goal node from the start node, using the Breadth First Search algorithm.
+        /// </summary>
+        /// <param name="myNodes">All Nodes</param>
+        /// <param name="goal">Goal Node</param>
+        /// <param name="visualPath">List of visual process</param>
+        /// <returns>The path to the goal, using BFS</returns>
         public List<Node> BreadthFirstSearch(List<Node> myNodes, Node goal, List<SlowColours> visualPath)
         {
             if (myNodes.Count == 0)
@@ -17,10 +24,10 @@ namespace Operation_Search_Tree
             List<PathInfo> someNodes2 = new List<PathInfo>();
             List<Node> alreadyChecked = new List<Node>();
 
-            someNodes.Add(new PathInfo(myNodes[0], new List<Node>()));
-            while (someNodes.Count > 0)
+            someNodes.Add(new PathInfo(myNodes[0], new List<Node>())); //Add starting Node
+            while (someNodes.Count > 0) //As long as there are Nodes to check
             {
-                for (int i = 0; i < someNodes.Count; i++)
+                for (int i = 0; i < someNodes.Count; i++) //Check all Nodes at depth
                 {
                     visualPath.Add(new SlowColours(someNodes[i].MyNode, Color.Red));
                     foreach (Edge neighbor in someNodes[i].MyNode.Edges)
@@ -30,7 +37,7 @@ namespace Operation_Search_Tree
                             PathInfo newPath = new PathInfo(neighbor.To, new List<Node>(someNodes[i].MyPath));
                             someNodes2.Add(newPath);
                             visualPath.Add(new SlowColours(neighbor.To, Color.Yellow));
-                            if (neighbor.To == goal)
+                            if (neighbor.To == goal) 
                             {
                                 visualPath.Add(new SlowColours(neighbor.To, Color.Blue));
                                 return newPath.MyPath;
@@ -58,7 +65,7 @@ namespace Operation_Search_Tree
         //    someNodes.Add(new PathInfo(myNodes[0], new List<Node>()));
         //    while (someNodes.Count > 0)
         //    {
-                
+
         //        someNodes[someNodes.Count - 1]
         //    }
 
@@ -66,13 +73,13 @@ namespace Operation_Search_Tree
         //}
 
         /// <summary>
-        ///     Input a list of connected Nodes, and recieve a found path to the goal node from the start node.
+        ///     Input a list of connected Nodes, and recieve a found path to the goal node from the start node, using the Depth First Search algorithm.
         /// </summary>
         /// <param name="myList">All nodes</param>
         /// <param name="myNode">Start Node</param>
         /// <param name="goal">Goal Node</param>
         /// <param name="visualPath">List of visual process</param>
-        /// <returns>The path to the goal</returns>
+        /// <returns>The path to the goal, using DFS</returns>
         public List<Node> DepthFirstSearch(List<Node> myList, Node myNode, Node goal, List<SlowColours> visualPath)
         {
             if (myList.Count == 0) //In case of the list being empty

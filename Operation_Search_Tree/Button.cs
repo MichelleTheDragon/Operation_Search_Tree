@@ -21,14 +21,25 @@ namespace Operation_Search_Tree
         private UI myUI;
         private Color textColour = Color.Black;
 
-        public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, Func<int> myFunc) : base(sprite, worldPos)
-        {
-            base.WorldPos = worldPos;
-            this.font = font;
-            //vectorScale = new Vector2(200.0f, 40.0f);
-            this.myFunc = myFunc;
-        }
+        //public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, Func<int> myFunc) : base(sprite, worldPos)
+        //{
+        //    base.WorldPos = worldPos;
+        //    this.font = font;
+        //    //vectorScale = new Vector2(200.0f, 40.0f);
+        //    this.myFunc = myFunc;
+        //}
 
+        /// <summary>
+        ///     Basic Button
+        /// </summary>
+        /// <param name="sprite">Sprite used for the button</param>
+        /// <param name="worldPos">Position of left top corner of the button</param>
+        /// <param name="font">Font used for button text</param>
+        /// <param name="text">Text content</param>
+        /// <param name="rectWidth">Width of button</param>
+        /// <param name="rectHeight">Height of button</param>
+        /// <param name="myFunc">Function the button should run when pressed</param>
+        /// <param name="canBeHeld">Boolean defining if the button should have a "ON" colour</param>
         public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, string text, int rectWidth, int rectHeight, Func<int> myFunc, int canBeHeld) : base(sprite, worldPos)
         {
             base.WorldPos = new Vector2(worldPos.X + rectWidth / 2, worldPos.Y + rectHeight / 2);
@@ -41,6 +52,18 @@ namespace Operation_Search_Tree
             textOrigin = new Vector2(font.MeasureString(text).X / 2, font.MeasureString(text).Y / 2);
         }
 
+        /// <summary>
+        ///     Hardcoded constructor for the DFS and BFS buttons
+        /// </summary>
+        /// <param name="sprite">Sprite used for the button</param>
+        /// <param name="worldPos">Position of left top corner of the button</param>
+        /// <param name="font">Font used for button text</param>
+        /// <param name="text">Text content</param>
+        /// <param name="rectWidth">Width of button</param>
+        /// <param name="rectHeight">Height of button</param>
+        /// <param name="myFunc">Function the button should run when pressed</param>
+        /// <param name="canBeHeld">Boolean defining if the button should have a "ON" colour</param>
+        /// <param name="myUI">The UI creating the button</param>
         public Button(Texture2D sprite, Vector2 worldPos, SpriteFont font, string text, int rectWidth, int rectHeight, Func<int> myFunc, int canBeHeld, UI myUI) : base(sprite, worldPos)
         {
             base.WorldPos = new Vector2(worldPos.X + rectWidth / 2, worldPos.Y + rectHeight / 2);
@@ -61,6 +84,7 @@ namespace Operation_Search_Tree
             Point mousePoint = new Point(mouseState.X, mouseState.Y);
             Rectangle rectangle = new Rectangle((int)WorldPos.X - rect.Width/2, (int)WorldPos.Y - rect.Height/2, rect.Width, rect.Height);
 
+            //if the mouse is hovering over the button
             if (rectangle.Contains(mousePoint) && isHovered != true && mouseState.LeftButton == ButtonState.Released)
             {
                 isHovered = true;
@@ -73,12 +97,13 @@ namespace Operation_Search_Tree
                 isHovered = false;
             }
 
+            //if the left mouse button is pressed while on the button
             if (mouseState.LeftButton == ButtonState.Pressed && isHovered && !clickRegistered)
             {
                 if (buttonColoured == 1)
                 {
                     myFunc();
-                    myUI.CleanSearchColours();
+                    myUI.CleanSearchColours(); //makes sure both buttons are visually set as off
                     colour = Color.Purple;
                     textColour = Color.White;
                     LastColour = colour;
@@ -91,9 +116,7 @@ namespace Operation_Search_Tree
                         LastColour = colour;
                     } else
                     {
-                        colour = Color.White;
-                        textColour = Color.Black;
-                        LastColour = colour;
+                        CleanColour();
                     }
                 }
                 else
@@ -108,7 +131,7 @@ namespace Operation_Search_Tree
             }
         }
 
-        public void CleanColour()
+        public void CleanColour() //dafault colouring
         {
             colour = Color.White;
             LastColour = colour;

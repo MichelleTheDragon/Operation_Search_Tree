@@ -157,7 +157,7 @@ namespace Operation_Search_Tree
                     visualizeColours = false;
                 }
             }
-            if (drawFastestPath)
+            if (drawFastestPath) 
             {
                 pathShowTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
@@ -182,9 +182,12 @@ namespace Operation_Search_Tree
             }
         }
 
+        /// <summary>
+        ///     Run the search algorithm
+        /// </summary>
         public void RunSearch()
         {
-            CleanNodes(Color.Blue);
+            CleanNodes(Color.Blue); 
             VisualPath = new List<SlowColours>();
             List<Node> newPath = new List<Node>();
             switch (searchMethod)
@@ -200,7 +203,7 @@ namespace Operation_Search_Tree
                     break;
             }
             pathChosen = new List<Node[]>();
-            for (int i = 1; i < newPath.Count; i++)
+            for (int i = 1; i < newPath.Count; i++) //add the path taken by the search algorithm to get to the goal
             {
                 pathChosen.Add(new Node[] { newPath[i - 1], newPath[i] });
                 VisualPath.Add(new SlowColours(newPath[i - 1], Color.Blue));
@@ -210,6 +213,11 @@ namespace Operation_Search_Tree
             IsRunning = true;
         }
 
+        /// <summary>
+        ///     connects two nodes
+        /// </summary>
+        /// <param name="from">can go from this node</param>
+        /// <param name="to">to this node</param>
         public void AddEdge(Node from, Node to)
         {
             from.AddEdge(to);
@@ -217,15 +225,18 @@ namespace Operation_Search_Tree
             nodesConnected.Add(new Node[] { from, to });
         }
 
+        /// <summary>
+        ///     Connects the nodes to a parent, and possibly to a neighbor at same depth
+        /// </summary>
         public void ConnectNodes()
         {
             List<Node[]> siblings = new List<Node[]>();
             List<Node> hasSibling = new List<Node>();
             foreach (Node myNode in nodeset)
             {
-                if (myNode.Depth > 0)
+                if (myNode.Depth > 0) //don't run for starting node
                 {
-                    if (myNode.Depth == 1)
+                    if (myNode.Depth == 1) //only 1 parent (starting node), no need to check all nodes
                     {
                         AddEdge(myNode, nodeset[0]);
                     } else
@@ -236,9 +247,9 @@ namespace Operation_Search_Tree
                         double closestSiblingValue = 0;
                         foreach (Node myNode2 in nodeset)
                         {
-                            if(myNode2.Depth == myNode.Depth - 1)
+                            if(myNode2.Depth == myNode.Depth - 1) //if node is 1 depth lower
                             {
-                                if (closestNode == null)
+                                if (closestNode == null) 
                                 {
                                     closestNode = myNode2;
                                     closestValue = Math.Sqrt(Math.Pow(myNode2.WorldPos.X - myNode.WorldPos.X, 2) + Math.Pow(myNode2.WorldPos.Y - myNode.WorldPos.Y, 2));
@@ -246,19 +257,19 @@ namespace Operation_Search_Tree
                                 else
                                 {
                                     double tempDistance = Math.Sqrt(Math.Pow(myNode2.WorldPos.X - myNode.WorldPos.X, 2) + Math.Pow(myNode2.WorldPos.Y - myNode.WorldPos.Y, 2));
-                                    if (tempDistance < closestValue)
+                                    if (tempDistance < closestValue) //check if current node being checked is closer than the all others checked so far
                                     {
                                         closestNode = myNode2;
                                         closestValue = tempDistance;
                                     }
                                 }
                             }
-                            if (myNode2.Depth == myNode.Depth && myNode2 != myNode)
+                            if (myNode2.Depth == myNode.Depth && myNode2 != myNode) //if node at same depth, and not itself
                             {
                                 double tempSiblingValue = Math.Sqrt(Math.Pow(myNode2.WorldPos.X - myNode.WorldPos.X, 2) + Math.Pow(myNode2.WorldPos.Y - myNode.WorldPos.Y, 2));
-                                if (tempSiblingValue < 90)
+                                if (tempSiblingValue < 90) //if the distance to the node is less than 90 (needs optimization)
                                 {
-                                    if (!hasSibling.Contains(myNode2))
+                                    if (!hasSibling.Contains(myNode2)) //if node already is connected to a different sibling
                                     {
                                         if (closestSiblingNode == null)
                                         {
@@ -275,7 +286,7 @@ namespace Operation_Search_Tree
                         }
                         AddEdge(myNode, closestNode);
 
-                        if (closestSiblingNode != null && rngAmount.Next(1, 100) < 10)
+                        if (closestSiblingNode != null && rngAmount.Next(0, 100) < 10) //10% chance of getting a sibling
                         {
                             hasSibling.Add(myNode);
                             hasSibling.Add(closestSiblingNode);
@@ -306,7 +317,7 @@ namespace Operation_Search_Tree
                 {
                     GameWorld.DrawLine(_spriteBatch, pathLine[1].WorldPos, pathLine[0].WorldPos, Color.Blue, 2);
                 }
-                if (autoRun && pathShowTimer >= 3.0f)
+                if (autoRun && pathShowTimer >= 3.0f) //every 3seconds, if autorun is ON, run this
                 {
                     pathShowTimer = 0.0f;
                     if (randomSearchTree)
@@ -325,6 +336,11 @@ namespace Operation_Search_Tree
             }
         }
 
+        /// <summary>
+        ///     Generates all the nodes
+        /// </summary>
+        /// <param name="maxDepth">maximum depth possible for nodes to spawn at</param>
+        /// <param name="isBothWay">can the search tree travel both ways between all nodes?</param>
         public void GenerateNodes(int maxDepth, bool isBothWay)
         {
             MyGameObjects = new List<GameObject>();
@@ -342,11 +358,11 @@ namespace Operation_Search_Tree
             startNode = new Node(nodeSprite, startNodePos, 0.5f, 0, startNodePos, 0);
             MyGameObjects.Add(startNode);
             nodeset.Add(startNode);
-            for (int i = 0; i < maxDepth; i++)
+            for (int i = 0; i < maxDepth; i++) //for each depth of nodes
             {
-                int randomAmountofNodes = rngAmount.Next((3 * i) + 3, 10 + i * 3);
+                int randomAmountofNodes = rngAmount.Next((3 * i) + 3, 10 + i * 3); //decide on a random amount of nodes at depth, dependent on depth
                 List<Node> myNodePositions = new List<Node>();
-                for (int j = 0; j < randomAmountofNodes; j++)
+                for (int j = 0; j < randomAmountofNodes; j++) //for each node at depth
                 {
                     float randomAngle = 0;
                     bool notOverlapping = true;
@@ -354,7 +370,9 @@ namespace Operation_Search_Tree
                     int failCounter = 0;
                     bool foundPlacement = true;
                     Vector2 newNodePos = Vector2.Zero;
-                    while (notOverlapping || parentTooFarAway)
+
+                    //as long as the node is not overlapping with another node and is in distance of a node at 1 depth before this
+                    while (notOverlapping || parentTooFarAway)  
                     {
                         notOverlapping = false;
                         parentTooFarAway = true;
@@ -363,16 +381,16 @@ namespace Operation_Search_Tree
                         float myAngleX = (float)Math.Cos(randomAngle);
                         float myAngleY = (float)Math.Sin(randomAngle);
                         newNodePos = new Vector2(startNodePos.X + (DistanceBetweenDepth * (i + 1) * myAngleX), startNodePos.Y + (DistanceBetweenDepth * (i + 1) * myAngleY));
-                        foreach (Node myNodePosition in myNodePositions)
+                        foreach (Node myNodePosition in myNodePositions) //check all current nodes for overlap
                         {
                             if (Math.Sqrt(Math.Pow(newNodePos.X - myNodePosition.WorldPos.X, 2) + Math.Pow(newNodePos.Y - myNodePosition.WorldPos.Y, 2)) < 30.0f)
                             {
                                 notOverlapping = true;
                             }
                         }
-                        foreach (Node test in nodeset)
+                        foreach (Node test in nodeset) 
                         {
-                            if (test.Depth == i)
+                            if (test.Depth == i) //check all nodes 1 depth lower if there is one close enough
                             {
                                 if (Math.Sqrt(Math.Pow(newNodePos.X - test.WorldPos.X, 2) + Math.Pow(newNodePos.Y - test.WorldPos.Y, 2)) < 130.0f)
                                 {
@@ -383,14 +401,14 @@ namespace Operation_Search_Tree
                         if (notOverlapping || parentTooFarAway)
                         {
                             failCounter++;
-                            if (failCounter > 5 * (i + 1))
+                            if (failCounter > 5 * (i + 1)) //if it fails to find a location to spawn a certain times, give up.
                             {
                                 foundPlacement = false;
                                 break;
                             }
                         }
                     }
-                    if (foundPlacement)
+                    if (foundPlacement) //if placement found, spawn the node at the location
                     {
                         Node newNode = new Node(nodeSprite, newNodePos, rngAmount.Next(25, 35) * 0.01f, i + 1, startNode.WorldPos, randomAngle);
                         myNodePositions.Add(newNode);
@@ -402,6 +420,10 @@ namespace Operation_Search_Tree
             ConnectNodes();
         }
         
+        /// <summary>
+        ///     Set the goal node
+        /// </summary>
+        /// <param name="myNode">new goal node</param>
         public static void ChangeGoal(Node myNode)
         {
             if (goal != null)
@@ -412,7 +434,11 @@ namespace Operation_Search_Tree
             goal = myNode;
         }
 
-        public static void CleanNodes(Color color)
+        /// <summary>
+        ///     Sets the colour of the nodes to default, except for the goal
+        /// </summary>
+        /// <param name="color">The colour the goal should be</param>
+        public static void CleanNodes(Color color) 
         {
             foreach (Node newNode in nodeset)
             {
@@ -425,7 +451,10 @@ namespace Operation_Search_Tree
             drawFastestPath = false;
         }
 
-        public void UpdateZoom()
+        /// <summary>
+        ///     checks the scrollwheel to see if the zoom should be adjusted
+        /// </summary>
+        public void UpdateZoom() 
         {
             previousMouseWheelValue = currentMouseWheelValue;
             currentMouseWheelValue = Mouse.GetState().ScrollWheelValue;
@@ -455,6 +484,7 @@ namespace Operation_Search_Tree
                 }
             }
         }
+
         public void AdjustZoom(float zoomAmount)
         {
             Zoom += zoomAmount;
@@ -468,6 +498,10 @@ namespace Operation_Search_Tree
             }
         }
 
+        /// <summary>
+        ///     Generates a new set of nodes
+        /// </summary>
+        /// <returns>1 == completed</returns>
         public int GenerateNew()
         {
             autoRun = false;
@@ -475,6 +509,10 @@ namespace Operation_Search_Tree
             return 1;
         }
 
+        /// <summary>
+        ///     Decreases the max generation depth
+        /// </summary>
+        /// <returns>1 == completed</returns>
         public int DepthLower()
         {
             if (nodeDepth > 3)
@@ -483,28 +521,44 @@ namespace Operation_Search_Tree
             }
             return 1;
         }
+
+        /// <summary>
+        ///     increases the max generation depth
+        /// </summary>
+        /// <returns>1 == completed</returns>
         public int DepthHigher()
         {
-            if (nodeDepth < 30)
+            if (nodeDepth < 23)
             {
                 nodeDepth++;
             }
             return 1;
         }
 
+        /// <summary>
+        ///     Sets the search method to Death First Search
+        /// </summary>
+        /// <returns>1 == completed</returns>
         public int SetDFS()
         {
             searchMethod = 1;
             return 1;
         }
 
+        /// <summary>
+        ///     Sets the search method to Breadth First Search
+        /// </summary>
+        /// <returns>1 == completed</returns>
         public int SetBFS()
         {
             searchMethod = 0;
             return 1;
         }
 
-
+        /// <summary>
+        ///     Runs the search algorithm if an simulation is not already running
+        /// </summary>
+        /// <returns>1 == completed</returns>
         public int RunSearchButton()
         {
             if (goal != null && !IsRunning)
@@ -514,6 +568,10 @@ namespace Operation_Search_Tree
             return 1;
         }
 
+        /// <summary>
+        ///     Toggles the step by step option
+        /// </summary>
+        /// <returns>1 == true, 0 == false</returns>
         public int SetStepByStep()
         {
             stepByStep = !stepByStep;
@@ -524,18 +582,30 @@ namespace Operation_Search_Tree
             return 0;
         }
 
+        /// <summary>
+        ///     Go back in the simulation
+        /// </summary>
+        /// <returns>1 == completed</returns>
         public int StepDown()
         {
             speedLeft = true;
             return 1;
         }
 
+        /// <summary>
+        ///     Go forward in the simulation
+        /// </summary>
+        /// <returns>1 == completed</returns>
         public int StepUp()
         {
             speedRight = true;
             return 1;
         }
 
+        /// <summary>
+        ///     Start the automatic simulation with random maximum depth, search method, and goal.
+        /// </summary>
+        /// <returns>1 == completed</returns>
         public int AutoRun()
         {
             GenerateNodes(rngAmount.Next(5, 16), true);
@@ -546,7 +616,7 @@ namespace Operation_Search_Tree
         }
     }
 
-    public class SlowColours
+    public class SlowColours //used to store the colour a Node should turn when running through the simulation 
     {
         public Node NodetoColour { get; set; }
         public Color Colour { get; set; }

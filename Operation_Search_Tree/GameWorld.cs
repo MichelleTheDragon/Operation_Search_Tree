@@ -93,10 +93,10 @@ namespace Operation_Search_Tree
 
         public static void DrawLine(SpriteBatch spriteBatch, Vector2 begin, Vector2 end, Color color, int width = 1) //Function that creates and draws a line between two points
         {
-            Rectangle newRect = new Rectangle((int)begin.X, (int)begin.Y, (int)(end - begin).Length() + width, width);
-            Vector2 newVector = Vector2.Normalize(begin - end);
-            float angle = (float)Math.Acos(Vector2.Dot(newVector, -Vector2.UnitX));
-            if (begin.Y > end.Y) { 
+            Rectangle newRect = new Rectangle((int)begin.X, (int)begin.Y, (int)(end - begin).Length() + width, width); //creates a rectangle starting at node 1 position
+            Vector2 newVector = Vector2.Normalize(begin - end); //vector between node 2 and 1
+            float angle = (float)Math.Acos(Vector2.Dot(newVector, -Vector2.UnitX)); //angle from node 1 to 2
+            if (begin.Y > end.Y) {  
                 angle = MathHelper.TwoPi - angle; 
             }
             spriteBatch.Draw(aPixelSprite, newRect, null, color, angle, Vector2.Zero, SpriteEffects.None, 0);

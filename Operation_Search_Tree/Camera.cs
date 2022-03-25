@@ -28,6 +28,7 @@ namespace Operation_Search_Tree
                     Matrix.CreateScale(Zoom) *
                     Matrix.CreateTranslation(new Vector3(Bounds.Width * 0.5f, Bounds.Height * 0.5f, 0));
         }
+
         public void AdjustZoom(float zoomAmount)
         {
             Zoom += zoomAmount;
@@ -40,6 +41,7 @@ namespace Operation_Search_Tree
                 Zoom = 2f;
             }
         }
+
         public void UpdateCamera(Viewport bounds)
         {
             Bounds = bounds.Bounds;

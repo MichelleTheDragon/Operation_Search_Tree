@@ -45,13 +45,13 @@ namespace Operation_Search_Tree
             }
         }
 
-        public void UpdateRect()
-        {
-            if (sprite != null)
-            {
-                rect = new Rectangle(0, 0, sprite.Width, sprite.Height);
-                origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
-            }
-        }
+        //public void UpdateRect()
+        //{
+        //    if (sprite != null)
+        //    {
+        //        rect = new Rectangle(0, 0, sprite.Width, sprite.Height);
+        //        origin = new Vector2(sprite.Width / 2, sprite.Height / 2);
+        //    }
+        //}
     }
 }

@@ -8,17 +8,12 @@ namespace Operation_Search_Tree
 {
     class UI : GameObject
     {
-        private SpriteFont baseFont;
         private List<UIText> myTexts = new List<UIText>();
         private List<Button> myButtons = new List<Button>();
-        private NodeTree nodeTreeScene;
-        private List<Button> searchButtons = new List<Button>();
+        private List<Button> searchButtons = new List<Button>(); //the DFS and BFS button
 
         public UI(SpriteFont baseFont, Texture2D baseButton, NodeTree nodeTreeScene, Viewport myScreen)
         {
-            this.baseFont = baseFont;
-            this.nodeTreeScene = nodeTreeScene;
-
             //Top Left buttons
             myButtons.Add(new Button(baseButton, new Vector2(50, 50), baseFont, "Generate Nodes", 250, 40, nodeTreeScene.GenerateNew, 0)); 
             myTexts.Add(new UIText(baseFont, new Vector2(50, 105), "Depth: ", nodeTreeScene));
@@ -35,7 +30,7 @@ namespace Operation_Search_Tree
             myButtons.Add(new Button(baseButton, new Vector2(50, 200), baseFont, "Start Search", 250, 40, nodeTreeScene.RunSearchButton, 0));
 
             //Bottom buttons
-            myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width/2 - 100, myScreen.Height - 80), baseFont, "Step by Step", 200, 40, nodeTreeScene.SetStepByStep, 2, this));
+            myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width/2 - 100, myScreen.Height - 80), baseFont, "Step by Step", 200, 40, nodeTreeScene.SetStepByStep, 2));
             myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width / 2 - 150, myScreen.Height - 80), baseFont, "-", 40, 40, nodeTreeScene.StepDown, 0));
             myButtons.Add(new Button(baseButton, new Vector2(myScreen.Width / 2 + 110, myScreen.Height - 80), baseFont, "+", 40, 40, nodeTreeScene.StepUp, 0));
 
@@ -69,7 +64,7 @@ namespace Operation_Search_Tree
         {
             foreach (UIText myText in myTexts)
             {
-                if (myText.dynamicText)
+                if (myText.dynamicText) //if the text contains values that can change at runtime
                 {
                     _spriteBatch.DrawString(myText.Font, myText.FullText, myText.Pos, myText.Colour);
                 }
