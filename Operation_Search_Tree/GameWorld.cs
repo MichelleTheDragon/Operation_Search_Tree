@@ -13,13 +13,13 @@ namespace Operation_Search_Tree
         //public static Camera MyCamera { get; private set; }
 
         private static List<Scene> myScenes = new List<Scene>(); 
-        public static int SceneNumber { get; set; } = 1; //Start at scene 1, skipping Main Menu
+        public static int SceneNumber { get; set; } = 0; //Start at scene 1, skipping Main Menu
 
         private Texture2D background;
         private static Texture2D aPixelSprite;
         private Texture2D baseButton;
         private SpriteFont baseFont;
-        private UI myUI;
+        private static List<UI> myUIs = new List<UI>();
 
         public GameWorld()
         {
@@ -50,23 +50,28 @@ namespace Operation_Search_Tree
             baseButton = Content.Load<Texture2D>("Sprites/1px"); //buttons temporarily using the 1px sprite too
 
             //Scenes
-            myScenes.Add(new MainMenu());
+            MainMenu myMainMenu = new MainMenu(this);
+            myScenes.Add(myMainMenu);
             NodeTree newNodeTree = new NodeTree(Content, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2));
             myScenes.Add(newNodeTree);
 
-            myUI = new UI(baseFont, baseButton, newNodeTree, GraphicsDevice.Viewport);
+            myUIs.Add(new UI(baseFont, baseButton, myMainMenu, GraphicsDevice.Viewport));
+            myUIs.Add(new UI(baseFont, baseButton, newNodeTree, GraphicsDevice.Viewport));
         }
 
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+                SceneNumber = 0;
 
-            if (myScenes.Count > 0) //Update current scene if any exists
+            if (myScenes.Count > 0 && SceneNumber < myScenes.Count) //Update current scene if any exists
             {
                 myScenes[SceneNumber].Update(gameTime);
+                if (myUIs.Count > 0 && SceneNumber < myUIs.Count)
+                {
+                    myUIs[SceneNumber].Update(gameTime);
+                }
             }
-            myUI.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -79,14 +84,17 @@ namespace Operation_Search_Tree
             _spriteBatch.Draw(background, new Rectangle(0,0, background.Width, background.Height), Color.White);
             _spriteBatch.End();
 
-            if (myScenes.Count > 0) //scene layer
+            if (myScenes.Count > 0 && SceneNumber < myScenes.Count) //scene layer
             {
                 myScenes[SceneNumber].Draw(_spriteBatch);
+                if (myUIs.Count > 0 && SceneNumber < myUIs.Count)
+                {
+                    _spriteBatch.Begin(); //UI layer
+                    myUIs[SceneNumber].Draw(_spriteBatch);
+                    _spriteBatch.End();
+                }
             }
 
-            _spriteBatch.Begin(); //UI layer
-            myUI.Draw(_spriteBatch);
-            _spriteBatch.End();
 
             base.Draw(gameTime);
         }

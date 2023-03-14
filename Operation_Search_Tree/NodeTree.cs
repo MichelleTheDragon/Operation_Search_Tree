@@ -55,7 +55,7 @@ namespace Operation_Search_Tree
         {
             this.startNodePos = startNodePos;
             nodeSprite = Content.Load<Texture2D>("Sprites/Node");
-            GenerateNodes(15, true);
+            GenerateNodes(5, true);
             mySearchTree = new SearchTrees();
         }
 

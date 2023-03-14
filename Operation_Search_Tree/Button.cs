@@ -118,6 +118,10 @@ namespace Operation_Search_Tree
                     {
                         CleanColour();
                     }
+                } else if (buttonColoured == 3)
+                {
+                    myFunc();
+                    myUI.CleanAutorunColour();
                 }
                 else
                 {
